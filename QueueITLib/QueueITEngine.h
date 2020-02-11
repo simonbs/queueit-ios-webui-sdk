@@ -6,6 +6,7 @@
 @protocol QueueDisabledDelegate;
 @protocol QueueITUnavailableDelegate;
 @protocol QueueUserExitedDelegate;
+@protocol QueueViewControllerWrapperDelegate;
 
 @interface QueueITEngine : NSObject
 @property (nonatomic)id<QueuePassedDelegate> queuePassedDelegate;
@@ -13,6 +14,7 @@
 @property (nonatomic)id<QueueDisabledDelegate> queueDisabledDelegate;
 @property (nonatomic)id<QueueITUnavailableDelegate> queueITUnavailableDelegate;
 @property (nonatomic)id<QueueUserExitedDelegate> queueUserExitedDelegate;
+@property (nonatomic, weak)id<QueueViewControllerWrapperDelegate> queueViewControllerWrapperDelegate;
 @property (nonatomic, strong)NSString* errorMessage;
 
 typedef enum {
@@ -56,4 +58,9 @@ typedef enum {
 
 @protocol QueueUserExitedDelegate <NSObject>
 -(void)notifyUserExited;
+@end
+
+@protocol QueueViewControllerWrapperDelegate <NSObject>
+- (UIViewController* _Nonnull)queueItEngine:(QueueITEngine* _Nonnull)engine
+                         wrapViewController:(UIViewController* _Nonnull)viewController;
 @end

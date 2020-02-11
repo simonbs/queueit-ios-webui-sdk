@@ -130,16 +130,17 @@ static int INITIAL_WAIT_RETRY_SEC = 1;
                                                                       eventTargetUrl:targetUrl
                                                                           customerId:self.customerId
                                                                              eventId:self.eventId];
+        UIViewController *wrappingViewController = [self createQueueViewControllerWrappingViewController:queueWKVC];
         if (@available(iOS 13.0, *)) {
             [queueWKVC setModalPresentationStyle: UIModalPresentationFullScreen];
         }
         if (self.delayInterval > 0) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delayInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self.host presentViewController:queueWKVC animated:YES completion:nil];
+                [self.host presentViewController:wrappingViewController animated:YES completion:nil];
             });
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.host presentViewController:queueWKVC animated:YES completion:nil];
+                [self.host presentViewController:wrappingViewController animated:YES completion:nil];
             });
         }
     }
@@ -150,14 +151,14 @@ static int INITIAL_WAIT_RETRY_SEC = 1;
                                                                       eventTargetUrl:targetUrl
                                                                           customerId:self.customerId
                                                                              eventId:self.eventId];
-        
+        UIViewController *wrappingViewController = [self createQueueViewControllerWrappingViewController:queueVC];
         if (self.delayInterval > 0) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delayInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self.host presentViewController:queueVC animated:YES completion:nil];
+                [self.host presentViewController:wrappingViewController animated:YES completion:nil];
             });
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.host presentViewController:queueVC animated:YES completion:nil];
+                [self.host presentViewController:wrappingViewController animated:YES completion:nil];
             });
         }
     }
@@ -290,6 +291,14 @@ static int INITIAL_WAIT_RETRY_SEC = 1;
         NSString* urlTtlString = [self.cache getUrlTtl];
         NSString* targetUrl = [self.cache getTargetUrl];
         [self.cache update:queuePageUrl urlTTL:urlTtlString targetUrl:targetUrl];
+    }
+}
+
+- (UIViewController*)createQueueViewControllerWrappingViewController:(UIViewController*)queueVC {
+    if (self.queueViewControllerWrapperDelegate != nil) {
+        return [self.queueViewControllerWrapperDelegate queueItEngine:self wrapViewController:queueVC];
+    } else {
+        return queueVC;
     }
 }
 
