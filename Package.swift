@@ -12,6 +12,10 @@ let package = Package(
         .library(name: "QueueITLib", targets: ["QueueITLib"])
     ],
     targets: [
-        .target(name: "QueueITLib", path: "QueueITLib")
+        .target(
+            name: "QueueITLib",
+            path: "QueueITLib",
+            publicHeadersPath: "."
+        )
     ]
 )
